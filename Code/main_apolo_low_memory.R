@@ -6,6 +6,7 @@ source('Code/Fixed/functions.R')
 # Read inputs.
 # ABC_inputs <- readRDS('Data/Inputs/BK_Ystats.RData')
 ABC_inputs <- readRDS('Data/Inputs/BK_exp_Ystats.RData')
+
 # Parameters.
 ID <- 's16'
 theta <- list(S = 1e7,                # Number of priors.
@@ -18,4 +19,5 @@ theta$nsim <- 100
 
 # filename <- sprintf("Data/Outputs/BK_%s.RData", theta$ID)
 filename <- sprintf("Data/Outputs/BK_exp_%s.RData", theta$ID)
+
 source('Code/apolo_sim_low_memory.R')

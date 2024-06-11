@@ -156,9 +156,10 @@ for (scenario in scenarios) {
         }
         ef_reales <- colMeans(apply(-draws_reales, 2, exp), na.rm = T)
         ef_abc <- colMeans(apply(-draws_abc, 2, exp), na.rm = T)
-	print(ef_abc)
-	print(ef_reales)
-	cont_while <- cont_while + 1
+        
+        print(ef_abc)
+        print(ef_reales)
+        cont_while <- cont_while + 1
       }
       
       EF_reales <- rbind(EF_reales, ef_reales)
