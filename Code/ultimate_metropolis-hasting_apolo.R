@@ -1,6 +1,6 @@
-file <- 'file1'
+file <- 'file16'
 # Dependencies ------------------------------------------------------------
-library(dplyr)
+library(magrittr)
 inputsMH <- function(residuals, t_periods, variances) {
   sv <- variances[["sigma_v"]]
   sa <- variances[["sigma_v0"]]
@@ -78,11 +78,13 @@ results_filename <- sprintf('Data/Outputs/ultimate_MH_%s.RData', file)
 ##
 S <- 1e4
 S_step_accept <- 100
-scenarios <- names(ultimate_pp)
+scenarios <- names(ultimate_pp) %>% print
 ##
 X <- inputs$X
 resultsMH <- list()
+
 for (scenario in scenarios) {
+  print(scenario)
   resultsMH[[scenario]] <- list()
   # Get real parameters
   n_periods <- inputs[[scenario]][['params']][['n']]
@@ -100,9 +102,10 @@ for (scenario in scenarios) {
                                  pattern = sprintf('%s\\.', scenario))
   abc_results <- readRDS(results_filepath)
   
-  sims <- names(ultimate_pp[[scenario]])
+  sims <- names(ultimate_pp[[scenario]]) %>% print
   idx_firms <- rep(1:n_periods, each = t_periods)
   for (sim in sims) {
+    print(sim)
     # Compute inputs for initial.
     y <- inputs[[scenario]][[sim]][['y']]
     ## Real.
@@ -131,7 +134,8 @@ for (scenario in scenarios) {
     for (firm in firms) {
       ef_reales <- NA
       ef_abc <- NA
-      while ( any(c(0, NA) %in% c(ef_abc, ef_reales)) ) {
+      cont_while <- 0
+      while ( any(c(0, NA) %in% c(ef_abc, ef_reales)) & cont_while < 4) {
         sprintf('Began scenario %s - simulation %s - firm %d',
                 scenario, sim, firm) %>% print
         tic <- Sys.time()
@@ -150,8 +154,11 @@ for (scenario in scenarios) {
             draws_abc <- rbind(draws_abc, inputs_MH_abc$u)
           }
         }
-        ef_reales <- colMeans(apply(-draws_reales, 2, exp))
-        ef_abc <- colMeans(apply(-draws_abc, 2, exp))
+        ef_reales <- colMeans(apply(-draws_reales, 2, exp), na.rm = T)
+        ef_abc <- colMeans(apply(-draws_abc, 2, exp), na.rm = T)
+        print(ef_abc)
+        print(ef_reales)
+        cont_while <- cont_while + 1
       }
       
       EF_reales <- rbind(EF_reales, ef_reales)
@@ -168,3 +175,5 @@ for (scenario in scenarios) {
   }
 }
 saveRDS(resultsMH, results_filename)
+
+print('TERMINE')
