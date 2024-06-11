@@ -1,0 +1,5 @@
+.git/
+^2*
+^temp
+*/.DS_Store
+Code/.Rhistory
