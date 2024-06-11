@@ -1,0 +1,8 @@
+Code/main_apolo_empirical.R
+Code/apolo_sim_empirical.R
+Code/Fixed/functions.R
+Data/Inputs/BK_empiricalData.RData
+Data/Outputs/BK_indonesianRice.RData
+Data/Outputs/BK_spainDairy.RData
+Data/Outputs/BK_swissRailWays.RData
+Data/Outputs/BK_usElectricity.RData
