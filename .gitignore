@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 .git/
 2local/
 temp*
-*/.DS_Store
-Code/.Rhistory
-=======
 *.DS_Store
-.git/
->>>>>>> local-juan
+Code/.Rhistory
 *.Rhistory
