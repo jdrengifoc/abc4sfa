@@ -15,4 +15,4 @@ module load python/3.6.0_miniconda-4.3.11_gcc-11.2.0
 source activate abc4sfa
 
 ##### JOB COMMANDS #### 
-Rscript Code/mh/apolo_mh_v2.R
+Rscript Code/mh/apolo_mh_v3.R

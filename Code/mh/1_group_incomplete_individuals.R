@@ -1,4 +1,8 @@
+# Based on the output files of any of `apolo_mh_v\\d.R` files, the code `MIGUEL`
+# create `incomplete_individuals.RData`. This code, split the missing
+# individuals in `n_files`, a parameter subject to calibration.
 library(magrittr)
+
 pp <- readRDS('After/ABC4SFAv2/Data/Inputs/incomplete_individuals.RData')
 
 names(pp) <- gsub('scenario', '', names(pp))
