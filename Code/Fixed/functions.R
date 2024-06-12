@@ -826,3 +826,67 @@ inv <- function(x){
   overallEf <- xinv[1]*xinv[2:length(x)]
   return(c(xinv,  overallEf))
 }
+
+
+# Metropolis-Hasting ------------------------------------------------------
+inputsMH <- function(residuals, t_periods, variances) {
+  sv <- variances[["sigma_v"]]
+  sa <- variances[["sigma_v0"]]
+  su <- variances[["sigma_u"]]
+  seta <- variances[["sigma_u0"]]
+  
+  A <- cbind(1, diag(t_periods))
+  it <- rep(1, t_periods)
+  Sigma <- sv^2 * diag(t_periods) + sa^2*it%*%t(it) 
+  V <- diag(c(seta^2, rep(su^2, t_periods)))
+  iSigma <- solve(Sigma)
+  Lambda <- solve(solve(V) + t(A)%*%iSigma%*%A)
+  R <- Lambda%*%t(A)%*%iSigma
+  # Proposal. Must have the same support (0, inf).
+  u <- tmvtnorm::rtmvnorm(1, mean = c(R%*%residuals), sigma = Lambda,
+                          lower = rep(0, length = t_periods + 1), 
+                          upper = rep(Inf, length = t_periods + 1), 
+                          algorithm = 'gibbs')
+  return(list(u = u, A = A, Sigma = Sigma, V = V, R = R, 
+              Lambda = Lambda, iSigma = iSigma))
+}
+uDrawMH <- function(inputs_MH, residuals, t_periods, variances, tun = 1) {
+  # Unpack parameters.
+  u <- inputs_MH$u
+  A <- inputs_MH$A
+  Sigma <- inputs_MH$Sigma
+  iSigma <- inputs_MH$iSigma
+  V <- inputs_MH$V
+  R <- inputs_MH$R
+  Lambda <- tun * inputs_MH$Lambda
+  seta <- variances[["sigma_u0"]]
+  su <- variances[["sigma_u"]]
+  
+  uc <- tmvtnorm::rtmvnorm(1, mean = c(R%*%residuals), sigma = Lambda,
+                           lower=rep(0, length = t_periods + 1), 
+                           upper=rep(Inf, length = t_periods + 1), 
+                           algorithm = 'gibbs')
+  quc <- tmvtnorm::dtmvnorm(uc, mean = c(R%*%residuals), sigma = Lambda,
+                            lower = rep(0, length = t_periods + 1), 
+                            upper = rep(Inf, length = t_periods + 1))
+  qu <- tmvtnorm::dtmvnorm(u, mean = c(R%*%residuals), sigma = Lambda,
+                           lower = rep(0, length = t_periods + 1), 
+                           upper = rep(Inf, length = t_periods + 1))
+  fuc <- -0.5*t(residuals - A%*%c(uc))%*%iSigma%*%(residuals - A%*%c(uc)) - 
+    t(c(seta, rep(su, t_periods)))%*%t(uc)
+  fu <- -0.5*t(residuals - A%*%c(u))%*%iSigma%*%(residuals - A%*%c(u)) - 
+    t(c(seta, rep(su, t_periods)))%*%t(u)
+  # Criterio de transición. Cómo actualizamos la cadena.
+  alpha <- min(exp(fuc-fu) * qu/quc, 1, na.rm = T)
+  unif <- runif(1, 0, 1)
+  if(unif < alpha){
+    unew <- uc
+    accept <- 1
+  } else{
+    unew <- u
+    accept <- 0
+  }
+  inputs_MH$u <- unew
+  inputs_MH$accept <- c(inputs_MH$accept, accept)
+  return(inputs_MH)
+}
