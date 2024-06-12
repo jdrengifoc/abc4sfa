@@ -1,7 +1,7 @@
 library(magrittr)
 pp <- readRDS('After/ABC4SFAv2/Data/Inputs/incomplete_individuals.RData')
 
-names(pp) <- gsub('cenario', '', names(pp))
+names(pp) <- gsub('scenario', '', names(pp))
 
 firms_to_repeat <- rep(0, 16)
 names(firms_to_repeat) <- names(pp)

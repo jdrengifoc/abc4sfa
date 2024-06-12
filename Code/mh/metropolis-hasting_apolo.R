@@ -1,4 +1,4 @@
-
+# This code make metropolis-hasting with different tuns one per estimate.
 # parameters
 S <- 1e4
 S_step_accept <- 100

@@ -1,4 +1,8 @@
+# This code make metropolis-hasting with different tuns one per estimate.
+# parameters
 file <- 'file16'
+S <- 1e4
+S_step_accept <- 100
 # Dependencies ------------------------------------------------------------
 library(magrittr)
 inputsMH <- function(residuals, t_periods, variances) {
@@ -75,11 +79,8 @@ ultimate_pp <- readRDS(ultimate_pp_filepath)
 ultimate_pp <- ultimate_pp[[file]]
 
 results_filename <- sprintf('Data/Outputs/ultimate_MH_%s.RData', file)
-##
-S <- 1e4
-S_step_accept <- 100
 scenarios <- names(ultimate_pp) %>% print
-##
+
 X <- inputs$X
 resultsMH <- list()
 
