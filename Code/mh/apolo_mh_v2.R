@@ -1,8 +1,11 @@
-# This code make metropolis-hasting with different tuns one per estimate.
-# parameters
+# For the remaining files, tries to estimate by mh without tun until the
+# estimate doesn't have `NA` parameters, or it makes `max_iterations`.
 file <- 'file16'
 S <- 1e4
 S_step_accept <- 100
+max_iterations <- 4L
+
+results_filename <- sprintf('Data/Outputs/ultimate_MH_%s.RData', file)
 # Dependencies ------------------------------------------------------------
 library(magrittr)
 inputsMH <- function(residuals, t_periods, variances) {
@@ -78,7 +81,6 @@ ultimate_pp_filepath <- 'Data/Inputs/ultimate_MH_exp.RData'
 ultimate_pp <- readRDS(ultimate_pp_filepath)
 ultimate_pp <- ultimate_pp[[file]]
 
-results_filename <- sprintf('Data/Outputs/ultimate_MH_%s.RData', file)
 scenarios <- names(ultimate_pp) %>% print
 
 X <- inputs$X
@@ -136,7 +138,7 @@ for (scenario in scenarios) {
       ef_reales <- NA
       ef_abc <- NA
       cont_while <- 0
-      while ( any(c(0, NA) %in% c(ef_abc, ef_reales)) & cont_while < 4) {
+      while ( any(c(0, NA) %in% c(ef_abc, ef_reales)) & cont_while < max_iterations) {
         sprintf('Began scenario %s - simulation %s - firm %d',
                 scenario, sim, firm) %>% print
         tic <- Sys.time()
@@ -177,5 +179,3 @@ for (scenario in scenarios) {
   }
 }
 saveRDS(resultsMH, results_filename)
-
-print('TERMINE')
